@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Bar;
+using api.Interfaces;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,18 +16,19 @@ namespace api.Controllers
   public class BarController : ControllerBase
   {
     private readonly ApplicationDbContext _context;
-    public BarController(ApplicationDbContext context)
+    private readonly IBarRepository _barRepo;
+    public BarController(ApplicationDbContext context, IBarRepository barRepo)
     {
-
+      _barRepo = barRepo;
       _context = context;
 
     }
-    // GET ALL
 
+    // GET ALL
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-      var bars = await _context.Bars.ToListAsync();
+      var bars = await _barRepo.GetAllAsync();
 
       var barDto = bars.Select(b => b.ToBarDto());
 
@@ -37,7 +39,7 @@ namespace api.Controllers
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {
-      var bar = await _context.Bars.FindAsync(id);
+      var bar = await _barRepo.GetByIdAsync(id);
 
       if (bar == null)
       {
@@ -52,8 +54,7 @@ namespace api.Controllers
     public async Task<IActionResult> Create([FromBody] CreateBarRequestDto barDto)
     {
       var barModel = barDto.ToBarFromCreateDto();
-      await _context.Bars.AddAsync(barModel);
-      await _context.SaveChangesAsync();
+      await _barRepo.CreateAsync(barModel);
       return CreatedAtAction(nameof(GetById), new { id = barModel.Id }, barModel.ToBarDto());
     }
 
@@ -62,24 +63,12 @@ namespace api.Controllers
     [Route("{id}")]
     public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBarRequestDto updateDto)
     {
-      var barModel = await _context.Bars.FirstOrDefaultAsync(b => b.Id == id);
+      var barModel = await _barRepo.UpdateAsync(id, updateDto);
 
       if (barModel == null)
       {
         return NotFound();
       }
-
-      barModel.Name = updateDto.Name;
-      barModel.Address = updateDto.Address;
-      barModel.City = updateDto.City;
-      barModel.State = updateDto.State;
-      barModel.Zip = updateDto.Zip;
-      barModel.Hours = updateDto.Hours;
-      barModel.Image = updateDto.Image;
-      barModel.Latitude = updateDto.Latitude;
-      barModel.Longitude = updateDto.Longitude;
-
-      await _context.SaveChangesAsync();
 
       return Ok(barModel.ToBarDto());
     }
@@ -90,7 +79,7 @@ namespace api.Controllers
     public async Task<IActionResult> Delete([FromRoute] int id)
     {
 
-      var barModel = await _context.Bars.FirstOrDefaultAsync(b => b.Id == id);
+      var barModel = await _barRepo.DeleteAsync(id);
 
       if (barModel == null)
       {
@@ -98,10 +87,6 @@ namespace api.Controllers
         return NotFound();
 
       }
-
-      _context.Bars.Remove(barModel);
-
-      await _context.SaveChangesAsync();
 
       return NoContent();
     }
