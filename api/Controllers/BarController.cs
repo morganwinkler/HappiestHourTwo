@@ -81,5 +81,27 @@ namespace api.Controllers
 
       return Ok(barModel.ToBarDto());
     }
+
+    // DELETE
+    [HttpDelete]
+    [Route("{id}")]
+    public IActionResult Delete([FromRoute] int id)
+    {
+
+      var barModel = _context.Bars.FirstOrDefault(b => b.Id == id);
+
+      if (barModel == null)
+      {
+
+        return NotFound();
+
+      }
+
+      _context.Bars.Remove(barModel);
+
+      _context.SaveChanges();
+
+      return NoContent();
+    }
   }
 }
