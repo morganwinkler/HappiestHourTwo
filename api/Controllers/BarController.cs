@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
+using api.Dtos.Bar;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,8 @@ namespace api.Controllers
       _context = context;
 
     }
+    // GET ALL
+
     [HttpGet]
     public IActionResult GetAll()
     {
@@ -28,6 +31,7 @@ namespace api.Controllers
       return Ok(bars);
     }
 
+    // GET BY ID
     [HttpGet("{id}")]
     public IActionResult GetById([FromRoute] int id)
     {
@@ -39,6 +43,16 @@ namespace api.Controllers
       }
 
       return Ok(bar.ToBarDto());
+    }
+
+    // CREATE
+    [HttpPost]
+    public IActionResult Create([FromBody] CreateBarRequestDto barDto)
+    {
+      var barModel = barDto.ToBarFromCreateDto();
+      _context.Bars.Add(barModel);
+      _context.SaveChanges();
+      return CreatedAtAction(nameof(GetById), new { id = barModel.Id }, barModel.ToBarDto());
     }
   }
 }

@@ -25,5 +25,21 @@ namespace api.Mappers
         Longitude = barModel.Longitude
       };
     }
+
+    public static Bar ToBarFromCreateDto(this CreateBarRequestDto barDto)
+    {
+      return new Bar
+      {
+        Name = barDto.Name,
+        Address = barDto.Address,
+        City = barDto.City,
+        State = barDto.State,
+        Zip = barDto.Zip,
+        Hours = barDto.Hours,
+        Image = barDto.Image,
+        Latitude = barDto.Latitude,
+        Longitude = barDto.Longitude
+      };
+    }
   }
 }
