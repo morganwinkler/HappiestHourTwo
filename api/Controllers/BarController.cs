@@ -6,6 +6,7 @@ using api.Data;
 using api.Dtos.Bar;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
@@ -23,19 +24,20 @@ namespace api.Controllers
     // GET ALL
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll()
     {
-      var bars = _context.Bars.ToList()
-      .Select(b => b.ToBarDto());
+      var bars = await _context.Bars.ToListAsync();
+
+      var barDto = bars.Select(b => b.ToBarDto());
 
       return Ok(bars);
     }
 
     // GET BY ID
     [HttpGet("{id}")]
-    public IActionResult GetById([FromRoute] int id)
+    public async Task<IActionResult> GetById([FromRoute] int id)
     {
-      var bar = _context.Bars.Find(id);
+      var bar = await _context.Bars.FindAsync(id);
 
       if (bar == null)
       {
@@ -47,20 +49,20 @@ namespace api.Controllers
 
     // CREATE
     [HttpPost]
-    public IActionResult Create([FromBody] CreateBarRequestDto barDto)
+    public async Task<IActionResult> Create([FromBody] CreateBarRequestDto barDto)
     {
       var barModel = barDto.ToBarFromCreateDto();
-      _context.Bars.Add(barModel);
-      _context.SaveChanges();
+      await _context.Bars.AddAsync(barModel);
+      await _context.SaveChangesAsync();
       return CreatedAtAction(nameof(GetById), new { id = barModel.Id }, barModel.ToBarDto());
     }
 
     // UPDATE
     [HttpPut]
     [Route("{id}")]
-    public IActionResult Update([FromRoute] int id, [FromBody] UpdateBarRequestDto updateDto)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBarRequestDto updateDto)
     {
-      var barModel = _context.Bars.FirstOrDefault(b => b.Id == id);
+      var barModel = await _context.Bars.FirstOrDefaultAsync(b => b.Id == id);
 
       if (barModel == null)
       {
@@ -77,7 +79,7 @@ namespace api.Controllers
       barModel.Latitude = updateDto.Latitude;
       barModel.Longitude = updateDto.Longitude;
 
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return Ok(barModel.ToBarDto());
     }
@@ -85,10 +87,10 @@ namespace api.Controllers
     // DELETE
     [HttpDelete]
     [Route("{id}")]
-    public IActionResult Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id)
     {
 
-      var barModel = _context.Bars.FirstOrDefault(b => b.Id == id);
+      var barModel = await _context.Bars.FirstOrDefaultAsync(b => b.Id == id);
 
       if (barModel == null)
       {
@@ -99,7 +101,7 @@ namespace api.Controllers
 
       _context.Bars.Remove(barModel);
 
-      _context.SaveChanges();
+      await _context.SaveChangesAsync();
 
       return NoContent();
     }
