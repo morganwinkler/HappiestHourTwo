@@ -54,5 +54,32 @@ namespace api.Controllers
       _context.SaveChanges();
       return CreatedAtAction(nameof(GetById), new { id = barModel.Id }, barModel.ToBarDto());
     }
+
+    // UPDATE
+    [HttpPut]
+    [Route("{id}")]
+    public IActionResult Update([FromRoute] int id, [FromBody] UpdateBarRequestDto updateDto)
+    {
+      var barModel = _context.Bars.FirstOrDefault(b => b.Id == id);
+
+      if (barModel == null)
+      {
+        return NotFound();
+      }
+
+      barModel.Name = updateDto.Name;
+      barModel.Address = updateDto.Address;
+      barModel.City = updateDto.City;
+      barModel.State = updateDto.State;
+      barModel.Zip = updateDto.Zip;
+      barModel.Hours = updateDto.Hours;
+      barModel.Image = updateDto.Image;
+      barModel.Latitude = updateDto.Latitude;
+      barModel.Longitude = updateDto.Longitude;
+
+      _context.SaveChanges();
+
+      return Ok(barModel.ToBarDto());
+    }
   }
 }
