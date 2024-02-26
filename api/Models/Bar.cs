@@ -22,5 +22,7 @@ namespace api.Models
     [Column(TypeName = "decimal(10,6)")]
     public decimal Longitude { get; set; }
 
+    public List<Special> Specials { get; set; } = new List<Special>();
+
   }
 }
