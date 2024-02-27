@@ -22,7 +22,8 @@ namespace api.Mappers
         Hours = barModel.Hours,
         Image = barModel.Image,
         Latitude = barModel.Latitude,
-        Longitude = barModel.Longitude
+        Longitude = barModel.Longitude,
+        Specials = barModel.Specials.Select(s => s.ToSpecialDto()).ToList()
       };
     }
 

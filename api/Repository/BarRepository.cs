@@ -21,13 +21,13 @@ namespace api.Repository
     // GET ALL
     public async Task<List<Bar>> GetAllAsync()
     {
-      return await _context.Bars.ToListAsync();
+      return await _context.Bars.Include(s => s.Specials).ToListAsync();
     }
 
     // GET BY ID
     public async Task<Bar?> GetByIdAsync(int id)
     {
-      return await _context.Bars.FindAsync(id);
+      return await _context.Bars.Include(s => s.Specials).FirstOrDefaultAsync(i => i.Id == id);
     }
 
     // CREATE
