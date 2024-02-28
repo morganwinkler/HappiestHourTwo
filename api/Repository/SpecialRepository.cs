@@ -29,5 +29,13 @@ namespace api.Repository
     {
       return await _context.Specials.FindAsync(id);
     }
+
+    // CREATE
+    public async Task<Special> CreateAsync(Special specialModel)
+    {
+      await _context.Specials.AddAsync(specialModel);
+      await _context.SaveChangesAsync();
+      return specialModel;
+    }
   }
 }

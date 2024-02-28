@@ -80,5 +80,11 @@ namespace api.Repository
       await _context.SaveChangesAsync();
       return barModel;
     }
+
+    // CHECK IF BAR EXISTS
+    public Task<bool> BarExists(int id)
+    {
+      return _context.Bars.AnyAsync(b => b.Id == id);
+    }
   }
 }

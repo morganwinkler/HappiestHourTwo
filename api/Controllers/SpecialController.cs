@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.Special;
 using api.Interfaces;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ namespace api.Controllers
   public class SpecialController : ControllerBase
   {
     private readonly ISpecialRepository _specialRepo;
-    public SpecialController(ISpecialRepository specialRepo)
+    private readonly IBarRepository _barRepo;
+    public SpecialController(ISpecialRepository specialRepo, IBarRepository barRepo)
     {
       _specialRepo = specialRepo;
+      _barRepo = barRepo;
     }
 
     // GET ALL
@@ -46,6 +49,20 @@ namespace api.Controllers
 
       return Ok(special.ToSpecialDto());
 
+    }
+
+    // CREATE
+    [HttpPost("{barId}")]
+    public async Task<IActionResult> Create([FromRoute] int barId, CreateSpecialDto specialDto)
+    {
+      if (!await _barRepo.BarExists(barId))
+      {
+        return BadRequest("Bar does not exist");
+      }
+
+      var specialModel = specialDto.ToSpecialFromCreate(barId);
+      await _specialRepo.CreateAsync(specialModel);
+      return CreatedAtAction(nameof(GetById), new { id = specialModel }, specialModel.ToSpecialDto());
     }
   }
 }

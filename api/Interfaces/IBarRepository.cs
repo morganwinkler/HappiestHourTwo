@@ -23,5 +23,8 @@ namespace api.Interfaces
 
     // DELETE
     Task<Bar?> DeleteAsync(int id);
+
+    // CHECK IF BAR EXISTS
+    Task<bool> BarExists(int id);
   }
 }
