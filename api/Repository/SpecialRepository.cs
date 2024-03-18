@@ -52,5 +52,22 @@ namespace api.Repository
       await _context.SaveChangesAsync();
       return specialModel;
     }
+
+    // UPDATE
+    public async Task<Special?> UpdateAsync(int id, Special specialModel)
+    {
+      var existingSpecial = await _context.Specials.FindAsync(id);
+
+      if (existingSpecial == null)
+      {
+        return null;
+      }
+
+      existingSpecial.Content = specialModel.Content;
+
+      await _context.SaveChangesAsync();
+
+      return existingSpecial;
+    }
   }
 }

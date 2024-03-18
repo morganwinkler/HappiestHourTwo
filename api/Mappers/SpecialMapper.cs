@@ -26,5 +26,15 @@ namespace api.Mappers
         BarId = barId
       };
     }
+
+    public static Special ToSpecialFromUpdate(this UpdateSpecialRequestDto specialDto, int barId)
+    {
+      return new Special
+      {
+        Content = specialDto.Content,
+        BarId = barId
+      };
+    }
+
   }
 }

@@ -80,5 +80,20 @@ namespace api.Controllers
 
       return Ok(specialModel);
     }
+
+    // UPDATE
+    [HttpPut]
+    [Route("{id}")]
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSpecialRequestDto updateDto)
+    {
+      var special = await _specialRepo.UpdateAsync(id, updateDto.ToSpecialFromUpdate(id));
+
+      if (special == null)
+      {
+        return NotFound("Special not found");
+      }
+
+      return Ok(special.ToSpecialDto());
+    }
   }
 }
