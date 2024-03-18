@@ -37,5 +37,20 @@ namespace api.Repository
       await _context.SaveChangesAsync();
       return specialModel;
     }
+
+    // DELETE
+    public async Task<Special?> DeleteAsync(int id)
+    {
+      var specialModel = await _context.Specials.FirstOrDefaultAsync(x => x.Id == id);
+
+      if (specialModel == null)
+      {
+        return null;
+      }
+
+      _context.Specials.Remove(specialModel);
+      await _context.SaveChangesAsync();
+      return specialModel;
+    }
   }
 }

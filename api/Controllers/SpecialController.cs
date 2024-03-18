@@ -64,5 +64,21 @@ namespace api.Controllers
       await _specialRepo.CreateAsync(specialModel);
       return CreatedAtAction(nameof(GetById), new { id = specialModel }, specialModel.ToSpecialDto());
     }
+
+    // DELETE
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+
+      var specialModel = await _specialRepo.DeleteAsync(id);
+
+      if (specialModel == null)
+      {
+        return NotFound("Special does not exist");
+      }
+
+      return Ok(specialModel);
+    }
   }
 }

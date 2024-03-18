@@ -17,5 +17,8 @@ namespace api.Interfaces
 
     // CREATE
     Task<Special> CreateAsync(Special specialModel);
+
+    // DELETE
+    Task<Special?> DeleteAsync(int id);
   }
 }
